@@ -3,8 +3,11 @@ package test.kotlin.nuhin13.kotintest
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -18,6 +21,24 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
+    private fun apiCall() {
+        val apiService = ApiService.create()
+        apiService.getOrderInfo(1308, 77365,
+                "vE3AaxzeohKq6aRVgxOXPMQYpfJ0WFqKRsdG8c3cxNDaA8HXGOsR2La50PqU", "ongoing")
+    }
+
+    private fun fetchData() {
+        val repository = SearchRepositoryProvider.provideSearchRepository()
+        repository.searchUsers("Lagos", "Java")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe ({
+                  //  result ->
+                    Log.d("Result", "There are  Java developers in Lagos")
+                }, { //error ->
+                   // error.printStackTrace()
+                })
+    }
 
     private fun getDataFromView() {
 
