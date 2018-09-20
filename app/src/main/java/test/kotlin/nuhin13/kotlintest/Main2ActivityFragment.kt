@@ -1,4 +1,4 @@
-package test.kotlin.nuhin13.kotintest
+package test.kotlin.nuhin13.kotlintest
 
 import android.support.v4.app.Fragment
 import android.os.Bundle

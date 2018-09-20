@@ -1,4 +1,4 @@
-package test.kotlin.nuhin13.kotintest
+package test.kotlin.nuhin13.kotlintest
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -6,36 +6,85 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.pranay.kotlinretrofitapicall.api.ApiProduction
+import com.pranay.kotlinretrofitapicall.api.response.NewsListResponse
+import com.pranay.kotlinretrofitapicall.api.service.NewsService
+import com.pranay.kotlinretrofitapicall.rx.RxAPICallHelper
+import com.pranay.kotlinretrofitapicall.rx.RxAPICallback
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import test.kotlin.nuhin13.kotlintest.api.response.PreferTime
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    var mNewsService: NewsService? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        mNewsService = ApiProduction(this).provideService(NewsService::class.java)
+        apiCall()
 
         buttonLogin.setOnClickListener(View.OnClickListener {
             getDataFromView();
         })
     }
 
+    private fun getNewsList() {
+        //Create retrofit Service
+        var mNewsService: NewsService = ApiProduction(this).provideService(NewsService::class.java)
+        //List of source : https://newsapi.org/sources
+        //List of sort by option: https://newsapi.org/#apiArticles
+        var apiCall: Observable<NewsListResponse> = mNewsService.getNewsApi("techcrunch", "top",
+                "3c08e0a94cfe43e69f0386f05eb3177f") //Test API Key
+
+        RxAPICallHelper().call(apiCall, object : RxAPICallback<NewsListResponse> {
+            override fun onSuccess(newsItems: NewsListResponse) {
+                //status= "error" in case of error
+                if (newsItems.getStatus().equals("ok")) {
+                    Log.e("Image", newsItems.getArticles()?.get(0)?.urlToImage)
+                            //setNewsData(newsItems)
+                }
+            }
+
+            override fun onFailed(throwable: Throwable) {
+                Log.e("error", throwable.toString())
+            }
+        })
+    }
+
     private fun apiCall() {
+        var apiCall: Observable<PreferTime> = mNewsService!!.getValidTime("app")
+
+        RxAPICallHelper().call(apiCall, object : RxAPICallback<PreferTime> {
+            override fun onSuccess(newsItems: PreferTime) {
+                Log.e("Image", newsItems.toString())
+            }
+
+            override fun onFailed(throwable: Throwable) {
+                Log.e("error", throwable.toString())
+            }
+        })
+    }
+
+    private fun apiCallPreferTime() {
         val apiService = ApiService.create()
-        apiService.getOrderInfo(1308, 77365,
-                "vE3AaxzeohKq6aRVgxOXPMQYpfJ0WFqKRsdG8c3cxNDaA8HXGOsR2La50PqU", "ongoing")
+        apiService.getPreferTime()
     }
 
     private fun fetchData() {
         val repository = SearchRepositoryProvider.provideSearchRepository()
-        repository.searchUsers("Lagos", "Java")
+        repository.getPreferTime()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe ({
                   //  result ->
                     Log.d("Result", "There are  Java developers in Lagos")
                 }, { //error ->
+                    Log.d("Error", "error")
                    // error.printStackTrace()
                 })
     }

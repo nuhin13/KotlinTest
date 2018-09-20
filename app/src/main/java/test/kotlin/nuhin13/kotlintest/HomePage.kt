@@ -1,4 +1,4 @@
-package test.kotlin.nuhin13.kotintest
+package test.kotlin.nuhin13.kotlintest
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 
 import kotlinx.android.synthetic.main.activity_home_page.*
 import kotlinx.android.synthetic.main.content_home_page.*
-import kotlin.coroutines.experimental.CoroutineContext
 
 class HomePage : AppCompatActivity() {
 
