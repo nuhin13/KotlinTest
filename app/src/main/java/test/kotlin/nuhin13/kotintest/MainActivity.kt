@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun goToNextActivity(email: String){
-        val intent = Intent(this@MainActivity,HomePage::class.java)
+        val intent = Intent(this@MainActivity,Main2Activity::class.java)
         intent.putExtra("Username", email);
         startActivity(intent)
     }
