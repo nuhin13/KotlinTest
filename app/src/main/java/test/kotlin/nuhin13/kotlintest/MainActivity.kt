@@ -1,8 +1,11 @@
 package test.kotlin.nuhin13.kotlintest
 
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -11,11 +14,13 @@ import com.pranay.kotlinretrofitapicall.api.response.NewsListResponse
 import com.pranay.kotlinretrofitapicall.api.service.NewsService
 import com.pranay.kotlinretrofitapicall.rx.RxAPICallHelper
 import com.pranay.kotlinretrofitapicall.rx.RxAPICallback
+import com.pranay.kotlinroomdbtodo.adapter.PreferTimeAdapter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import test.kotlin.nuhin13.kotlintest.api.response.PreferTime
+import test.kotlin.nuhin13.kotlintest.api.response.Time
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -62,6 +67,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         RxAPICallHelper().call(apiCall, object : RxAPICallback<PreferTime> {
             override fun onSuccess(newsItems: PreferTime) {
                 Log.e("Image", newsItems.toString())
+                showPreferTimeData(newsItems.times as List<Time>)
             }
 
             override fun onFailed(throwable: Throwable) {
@@ -112,6 +118,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             return;
         }
+    }
+
+    private fun showPreferTimeData(time: List<Time>){
+            rv_prefer_time.layoutManager = GridLayoutManager(this,2)
+
+            val preferTimeAdapter: PreferTimeAdapter = PreferTimeAdapter()
+            preferTimeAdapter.setData(time)
+            rv_prefer_time.adapter = preferTimeAdapter
     }
 
     private fun goToNextActivity(email: String){
